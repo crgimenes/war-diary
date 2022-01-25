@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"time"
 )
 
 func main() {
@@ -23,7 +24,12 @@ func main() {
 	defer os.Remove(f.Name())
 
 	fmt.Println("file:", f.Name())
-	f.Write([]byte("# test\n"))
+
+	date := time.Now().Format("2006-01-02 15:04:05")
+
+	header := fmt.Sprintf("# %s\n\n", date)
+
+	f.Write([]byte(header))
 	f.Close()
 
 	editor, ok := os.LookupEnv("VISUAL")
@@ -49,6 +55,9 @@ func main() {
 		log.Printf("Error while editing. Error: %v\n", err)
 		os.Exit(1)
 	}
-	log.Printf("Successfully edited.")
+
+	note, err := os.ReadFile(f.Name())
+
+	log.Println(string(note))
 
 }
